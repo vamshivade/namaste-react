@@ -1,15 +1,10 @@
-/* 
-<div id="parent">
-    <div id="child1">
-        <h1 class="h1">Heading 1</h1>
-        <h2 class="h2">Heading 2</h2>
-    </div>
-    <div id="child2">
-        <h1 class="h1">Heading 1</h1>
-    </div>
-</div> 
-*/
+const parent = React.createElement(
+  "h1",
+  { id: "heading-id", key: "heading-key" },
+  "Hello React",
+);
 
+/*
 const parent = React.createElement("div", { id: "parent", key: "parent" }, [
   React.createElement("div", { id: "child1", key: "child1" }, [
     React.createElement("h1", { id: "h1", key: "h1" }, "Heading 1"),
@@ -21,6 +16,9 @@ const parent = React.createElement("div", { id: "parent", key: "parent" }, [
     React.createElement("h1", { id: "h1", key: "h1" }, "Heading 1"),
   ),
 ]);
+*/
+
+console.log(parent);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
