@@ -1,34 +1,28 @@
-import { useState, useEffect } from "react";
-import RestaurantCard from "./RestaurantCard";
+import { useState } from "react";
+import RestaurantCard, { withPromotedlabel } from "./RestaurantCard";
 import Shimmer from "./Shimmer";
-import { RES_URL } from "../utils/constants";
+import { Link } from "react-router-dom";
+import useRestaurant from "../utils/useRestaurant";
+import useOnline from "../utils/useOnline";
+import { CLOUDINARY_IMAGE_URL } from "../utils/constants";
 
 const Body = () => {
-  const [resData, setResData] = useState([]);
-  const [allRestaurants, setAllRestaurants] = useState([]);
-  const [loading, setLoading] = useState(true);
-
   const [searchText, setSearchText] = useState("");
 
-  const fetchRestaurantData = async () => {
-    setLoading(true);
-    const data = await fetch(RES_URL);
+  const RestaurantCardPromoted = withPromotedlabel(RestaurantCard);
 
-    const jsonData = await data.json();
-    setResData(
-      jsonData?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
-        ?.restaurants,
-    );
-    setAllRestaurants(
-      jsonData?.data?.cards[4]?.card?.card?.gridElements?.infoWithStyle
-        ?.restaurants,
-    );
-    setLoading(false);
-  };
+  const {
+    restaurants: resData,
+    allRestaurants,
+    loading,
+    setRestaurants: setResData,
+    setAllRestaurants,
+    setLoading,
+  } = useRestaurant();
 
-  useEffect(() => {
-    fetchRestaurantData();
-  }, []);
+  const { isOnline } = useOnline();
+
+  // if(isOnline ? )
 
   return loading ? (
     <Shimmer />
@@ -88,19 +82,17 @@ const Body = () => {
           <h2 className="body-label"> No Restaurants Found</h2>
         ) : (
           resData.map((res) => (
-            <RestaurantCard
+            <Link
+              to={`/restaurant/${res?.info?.id}`}
               key={res?.info?.id}
-              resName={res?.info?.name}
-              resCostForTwo={res?.info?.costForTwo}
-              resImg={
-                "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_660/" +
-                res?.info?.cloudinaryImageId
-              }
-              rating={res?.info?.avgRating}
-              delTime={res?.info?.sla?.slaString}
-              cuisine={res?.info?.cuisines.join(", ")}
-              location={res?.info?.areaName}
-            />
+              onClick={() => console.log(res?.info?.id)}
+            >
+              {res?.info?.avgRating >= 4.2 ? (
+                <RestaurantCardPromoted restaurantData={res?.info} />
+              ) : (
+                <RestaurantCard restaurantData={res?.info} />
+              )}
+            </Link>
           ))
         )}
       </div>
