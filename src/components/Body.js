@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import RestaurantCard, { withPromotedlabel } from "./RestaurantCard";
 import Shimmer from "./Shimmer";
 import { Link } from "react-router-dom";
 import useRestaurant from "../utils/useRestaurant";
-import useOnline from "../utils/useOnline";
 import { CLOUDINARY_IMAGE_URL } from "../utils/constants";
+
+import UserContext from "../utils/UserContext";
 
 const Body = () => {
   const [searchText, setSearchText] = useState("");
@@ -20,9 +21,7 @@ const Body = () => {
     setLoading,
   } = useRestaurant();
 
-  const { isOnline } = useOnline();
-
-  // if(isOnline ? )
+  const { loggedInUser, setUserName } = useContext(UserContext);
 
   return loading ? (
     <Shimmer />
@@ -32,7 +31,13 @@ const Body = () => {
         <h2 className="body-label">
           Restaurants with online food delivery in Hyderabad
         </h2>
+
         <div className="search-div">
+          <input
+            placeholder="enter name to change"
+            value={loggedInUser}
+            onChange={(e) => setUserName(event.target.value)}
+          />
           <input
             placeholder="Enter name to search ..."
             className="search-input"
@@ -82,11 +87,7 @@ const Body = () => {
           <h2 className="body-label"> No Restaurants Found</h2>
         ) : (
           resData.map((res) => (
-            <Link
-              to={`/restaurant/${res?.info?.id}`}
-              key={res?.info?.id}
-              onClick={() => console.log(res?.info?.id)}
-            >
+            <Link to={`/restaurant/${res?.info?.id}`} key={res?.info?.id}>
               {res?.info?.avgRating >= 4.2 ? (
                 <RestaurantCardPromoted restaurantData={res?.info} />
               ) : (

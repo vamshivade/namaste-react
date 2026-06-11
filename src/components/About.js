@@ -1,10 +1,15 @@
 import User from "./User";
 import UserClass from "./UserClass";
 
+import { useContext } from "react";
+import UserContext from "../utils/UserContext";
+
 const About = () => {
+  const { loggedInUser } = useContext(UserContext);
+
   return (
     <div className="about-container">
-      <h1>About page</h1>
+      <h1>About page {loggedInUser}</h1>
       <div className="class-function">
         {/* 
         <User

@@ -3,21 +3,47 @@ import ReactDOM from "react-dom/client";
 import Header from "./components/Header";
 import Body from "./components/Body";
 import About from "./components/About";
-// import Contact from "./components/Contact";
 import Error from "./components/Error";
-// import RestaurantMenu from "./components/RestaurantMenu";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Shimmer from "./components/Shimmer";
+import UserContext from "./utils/UserContext";
+import Cart from "./components/Cart";
+
+import appStore from "./utils/appStore";
+import { Provider } from "react-redux";
 
 const Contact = lazy(() => import("./components/Contact"));
 const RestaurantMenu = lazy(() => import("./components/RestaurantMenu"));
+const FAQ = lazy(() => import("./components/FAQ"));
 
 const AppLayout = () => {
+  const [userName, setUserName] = useState("");
+
+  // authentication
+  useEffect(() => {
+    const data = {
+      name: "Vamshi Vade",
+    };
+    setUserName(data.name);
+  }, []);
+
   return (
-    <div className="App">
-      <Header />
+    <Provider store={appStore}>
+      <UserContext.Provider value={{ loggedInUser: userName, setUserName }}>
+        <div className="App">
+          <Header />
+          <Outlet />
+        </div>
+      </UserContext.Provider>
+    </Provider>
+  );
+};
+
+const SuspenseLayout = () => {
+  return (
+    <Suspense fallback={<Shimmer />}>
       <Outlet />
-    </div>
+    </Suspense>
   );
 };
 
@@ -35,21 +61,25 @@ const appRouter = createBrowserRouter([
         element: <About />,
       },
       {
-        path: "/contact",
-        element: (
-          // <Suspense fallback={<h1>Loading...!!</h1>}>
-          <Suspense fallback={<Shimmer />}>
-            <Contact />
-          </Suspense>
-        ),
+        path: "/cart",
+        element: <Cart />,
       },
       {
-        path: "/restaurant/:resId",
-        element: (
-          <Suspense fallback={<Shimmer />}>
-            <RestaurantMenu />
-          </Suspense>
-        ),
+        element: <SuspenseLayout />,
+        children: [
+          {
+            path: "/contact",
+            element: <Contact />,
+          },
+          {
+            path: "/restaurant/:resId",
+            element: <RestaurantMenu />,
+          },
+          {
+            path: "/faq",
+            element: <FAQ />,
+          },
+        ],
       },
     ],
     errorElement: <Error />,
