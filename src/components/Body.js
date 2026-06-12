@@ -36,7 +36,7 @@ const Body = () => {
           <input
             placeholder="enter name to change"
             value={loggedInUser}
-            onChange={(e) => setUserName(event.target.value)}
+            onChange={(event) => setUserName(event.target.value)}
           />
           <input
             placeholder="Enter name to search ..."
